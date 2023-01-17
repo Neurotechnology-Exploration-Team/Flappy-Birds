@@ -58,7 +58,7 @@ def flappy_game():
     up_pipes = [
         {'x': window_width + 300 - mytempheight,
          'y': first_pipe['upper']['y']},
-        {'x': window_width + 200 - mytempheight + (window_width / 2),
+        {'x': window_width + 300 - mytempheight + (window_width / 2),
          'y': second_pipe['upper']['y']},
     ]
 
