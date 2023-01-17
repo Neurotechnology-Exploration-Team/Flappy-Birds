@@ -25,6 +25,7 @@ bird_vel_y_max = 10
 bird_vel_y_min = -8
 gravity = 1
 
+# the velocity of the bird immediately after flapping
 bird_flap_velocity = -8
 
 # image paths
@@ -62,44 +63,38 @@ def flappygame():
     ]
 
     bird_vel_y = bird_vel_y_initial
-    bird_flapped = False
     while True:
+        bird_flapped = False
+
         for event in pygame.event.get():
-            if event.type == QUIT or (
-                    event.type == KEYDOWN and event.key == K_ESCAPE):
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN and (
-                    event.key == K_SPACE or event.key == K_UP):
+            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if bird_y > 0:
                     bird_vel_y = bird_flap_velocity
                     bird_flapped = True
 
         # This function will return true
-        # if the flappybird is crashed
-        game_over = isGameOver(bird_x,
-                               bird_y,
-                               up_pipes,
-                               down_pipes)
-        if game_over:
+        # if the flappy bird is crashed
+        if isGameOver(bird_x, bird_y, up_pipes, down_pipes):
             return
 
-        # check for your_score
-        playerMidPos = bird_x + game_images['flappy_bird'].get_width() / 2
+        # check for score
+        player_mid_pos = bird_x + game_images['flappy_bird'].get_width() / 2
         for pipe in up_pipes:
-            pipeMidPos = pipe['x'] + game_images['pipe_image'][0].get_width() / 2
-            if pipeMidPos <= playerMidPos < pipeMidPos + 4:
+            pipe_mid_pos = pipe['x'] + game_images['pipe_image'][0].get_width() / 2
+            if pipe_mid_pos <= player_mid_pos < pipe_mid_pos + 4:
                 score += 1
-                print(f"Your your_score is {score}")
+                print(f"Your score is {score}")
 
+        # apply gravity
         if bird_vel_y < bird_vel_y_max and not bird_flapped:
             bird_vel_y += gravity
 
-        if bird_flapped:
-            bird_flapped = False
-        playerHeight = game_images['flappy_bird'].get_height()
-        bird_y = bird_y + \
-                   min(bird_vel_y, ground_y - bird_y - playerHeight)
+        # move the bird, but don't move it into the ground
+        bird_height = game_images['flappy_bird'].get_height()
+        bird_y = bird_y + min(bird_vel_y, ground_y - bird_y - bird_height)
 
         # move pipes to the left
         for upperPipe, lowerPipe in zip(up_pipes, down_pipes):
@@ -109,9 +104,9 @@ def flappygame():
         # Add a new pipe when the first is
         # about to cross the leftmost part of the screen
         if 0 < up_pipes[0]['x'] < 5:
-            newpipe = createPipe()
-            up_pipes.append(newpipe['upper'])
-            down_pipes.append(newpipe['lower'])
+            new_pipe = createPipe()
+            up_pipes.append(new_pipe['upper'])
+            down_pipes.append(new_pipe['lower'])
 
         # if the pipe is out of the screen, remove it
         if up_pipes[0]['x'] < -game_images['pipe_image'][0].get_width():
@@ -121,28 +116,25 @@ def flappygame():
         # Lets blit our game images now
         window.blit(game_images['background'], (0, 0))
         for upperPipe, lowerPipe in zip(up_pipes, down_pipes):
-            window.blit(game_images['pipe_image'][0],
-                        (upperPipe['x'], upperPipe['y']))
-            window.blit(game_images['pipe_image'][1],
-                        (lowerPipe['x'], lowerPipe['y']))
+            window.blit(game_images['pipe_image'][0], (upperPipe['x'], upperPipe['y']))
+            window.blit(game_images['pipe_image'][1], (lowerPipe['x'], lowerPipe['y']))
 
         window.blit(game_images['sea_level'], (ground_x, ground_y))
         window.blit(game_images['flappy_bird'], (bird_x, bird_y))
 
         # Fetching the digits of score.
-        numbers = [int(x) for x in list(str(score))]
-        width = 0
+        numbers = [int(x) for x in str(score)]
+        score_width = 0
 
         # finding the width of score images from numbers.
         for num in numbers:
-            width += game_images['score_images'][num].get_width()
-        Xoffset = (window_width - width) / 1.1
+            score_width += game_images['score_images'][num].get_width()
+        x_offset = (window_width - score_width) / 1.1
 
         # Blitting the images on the window.
         for num in numbers:
-            window.blit(game_images['score_images'][num],
-                        (Xoffset, window_width * 0.02))
-            Xoffset += game_images['score_images'][num].get_width()
+            window.blit(game_images['score_images'][num], (x_offset, window_width * 0.02))
+            x_offset += game_images['score_images'][num].get_width()
 
         # Refreshing the game window and displaying the score.
         pygame.display.update()
