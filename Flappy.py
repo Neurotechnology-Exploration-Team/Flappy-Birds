@@ -156,17 +156,15 @@ def isGameOver(bird_x, bird_y, up_pipes, down_pipes):
 
     pipe_height = game_images['pipe_image'][0].get_height()
     pipe_width = game_images['pipe_image'][0].get_width()
-    
+
     bird_height = game_images['flappy_bird'].get_height()
 
     for pipe in up_pipes:
-        if (abs(bird_x - pipe['x']) < pipe_width
-                and bird_y < pipe_height + pipe['y']):
+        if abs(bird_x - pipe['x']) < pipe_width and bird_y < pipe_height + pipe['y']:
             return True
 
     for pipe in down_pipes:
-        if (abs(bird_x - pipe['x']) < pipe_width
-                and bird_y + bird_height > pipe['y']):
+        if abs(bird_x - pipe['x']) < pipe_width and bird_y + bird_height > pipe['y']:
             return True
 
     return False
@@ -176,9 +174,7 @@ def createPipe():
     offset = window_height / 3
     pipe_height = game_images['pipe_image'][0].get_height()
 
-    y_lower = random.randrange(
-             0, int(window_height - game_images['sea_level'].get_height()
-                    - 1.2 * offset)) + offset
+    y_lower = random.randrange(0, int(window_height - game_images['sea_level'].get_height() - 1.2 * offset)) + offset
     y_upper = y_lower - pipe_height - offset
 
     pipe_x = window_width + 10
@@ -203,25 +199,18 @@ if __name__ == "__main__":
     pygame.display.set_caption('Flappy Bird Game')
 
     # Load all the images which we will use in the game
-    game_images['flappy_bird'] = pygame.image.load(
-        bird_player_image).convert_alpha()
-    game_images['sea_level'] = pygame.image.load(
-        sea_level_image).convert_alpha()
-    game_images['background'] = pygame.image.load(
-        background_image).convert_alpha()
-    game_images['pipe_image'] = (pygame.transform.rotate(pygame.image.load(
-        pipe_image).convert_alpha(), 180), pygame.image.load(
-        pipe_image).convert_alpha())
+    game_images['flappy_bird'] = pygame.image.load(bird_player_image).convert_alpha()
+    game_images['sea_level'] = pygame.image.load(sea_level_image).convert_alpha()
+    game_images['background'] = pygame.image.load(background_image).convert_alpha()
+    game_images['pipe_image'] = (pygame.transform.rotate(pygame.image.load(pipe_image).convert_alpha(), 180),
+                                 pygame.image.load(pipe_image).convert_alpha())
 
     # digit images for displaying score
-    game_images['score_images'] = \
-        [pygame.image.load(f'images/{i}.png').convert_alpha() for i in
-         range(10)]
+    game_images['score_images'] = [pygame.image.load(f'images/{i}.png').convert_alpha() for i in range(10)]
 
     # game variables
     bird_start_x = int(window_width / 5)
-    bird_start_y = int(
-        (window_height - game_images['flappy_bird'].get_height()) / 2)
+    bird_start_y = int((window_height - game_images['flappy_bird'].get_height()) / 2)
 
     print("WELCOME TO THE FLAPPY BIRD GAME")
     print("Press space or enter to start the game")
@@ -231,22 +220,19 @@ if __name__ == "__main__":
         for event in pygame.event.get():
 
             # if user clicks on cross button, close the game
-            if event.type == QUIT or \
-                    (event.type == KEYDOWN and event.key == K_ESCAPE):
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
 
             # If the user presses space or
             # up key, start the game for them
-            elif event.type == KEYDOWN \
-                    and (event.key == K_SPACE or event.key == K_UP):
+            elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 flappygame()
 
             # if user doesn't press any key nothing happens
             else:
                 window.blit(game_images['background'], (0, 0))
-                window.blit(game_images['flappy_bird'],
-                            (bird_start_x, bird_start_y))
+                window.blit(game_images['flappy_bird'], (bird_start_x, bird_start_y))
                 window.blit(game_images['sea_level'], (ground_x, ground_y))
                 pygame.display.update()
                 fps_clock.tick(fps)
