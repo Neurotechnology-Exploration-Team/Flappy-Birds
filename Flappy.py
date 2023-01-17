@@ -150,22 +150,25 @@ def flappygame():
         fps_clock.tick(fps)
 
 
-def isGameOver(horizontal, vertical, up_pipes, down_pipes):
-    if vertical > ground_y - 25 or vertical < 0:
+def isGameOver(bird_x, bird_y, up_pipes, down_pipes):
+    if bird_y > ground_y - 25 or bird_y < 0:
         return True
 
+    pipe_height = game_images['pipe_image'][0].get_height()
+    pipe_width = game_images['pipe_image'][0].get_width()
+    
+    bird_height = game_images['flappy_bird'].get_height()
+
     for pipe in up_pipes:
-        pipeHeight = game_images['pipe_image'][0].get_height()
-        if (vertical < pipeHeight + pipe['y'] and \
-                abs(horizontal - pipe['x']) < game_images['pipe_image'][
-                    0].get_width()):
+        if (abs(bird_x - pipe['x']) < pipe_width
+                and bird_y < pipe_height + pipe['y']):
             return True
 
     for pipe in down_pipes:
-        if (vertical + game_images['flappy_bird'].get_height() > pipe['y']) and \
-                abs(horizontal - pipe['x']) < game_images['pipe_image'][
-            0].get_width():
+        if (abs(bird_x - pipe['x']) < pipe_width
+                and bird_y + bird_height > pipe['y']):
             return True
+
     return False
 
 
