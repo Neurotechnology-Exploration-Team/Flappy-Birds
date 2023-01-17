@@ -5,18 +5,24 @@ import pygame
 from pygame.locals import *
 
 # All the Game Variables
+
+# rendering variables
 window_width = 600
 window_height = 499
+fps = 32
 
 # set height and width of window
 window = pygame.display.set_mode((window_width, window_height))
-elevation = window_height * 0.8
+
+# game variables
+ground_height = window_height * 0.8
+
+# image paths
 game_images = {}
-framepersecond = 32
-pipeimage = 'images/pipe.png'
+pipe_image = 'images/pipe.png'
 background_image = 'images/background.jpg'
-birdplayer_image = 'images/bird.png'
-sealevel_image = 'images/base.jfif'
+bird_player_image = 'images/bird.png'
+sea_level_image = 'images/base.jfif'
 
 
 def flappygame():
@@ -91,7 +97,7 @@ def flappygame():
 			bird_flapped = False
 		playerHeight = game_images['flappybird'].get_height()
 		vertical = vertical + \
-			min(bird_velocity_y, elevation - vertical - playerHeight)
+			min(bird_velocity_y, ground_height - vertical - playerHeight)
 
 		# move pipes to the left
 		for upperPipe, lowerPipe in zip(up_pipes, down_pipes):
@@ -118,7 +124,7 @@ def flappygame():
 			window.blit(game_images['pipeimage'][1],
 						(lowerPipe['x'], lowerPipe['y']))
 
-		window.blit(game_images['sea_level'], (ground, elevation))
+		window.blit(game_images['sea_level'], (ground, ground_height))
 		window.blit(game_images['flappybird'], (horizontal, vertical))
 
 		# Fetching the digits of score.
@@ -138,11 +144,11 @@ def flappygame():
 
 		# Refreshing the game window and displaying the score.
 		pygame.display.update()
-		framepersecond_clock.tick(framepersecond)
+		framepersecond_clock.tick(fps)
 
 
 def isGameOver(horizontal, vertical, up_pipes, down_pipes):
-	if vertical > elevation - 25 or vertical < 0:
+	if vertical > ground_height - 25 or vertical < 0:
 		return True
 
 	for pipe in up_pipes:
@@ -202,14 +208,14 @@ if __name__ == "__main__":
 		pygame.image.load('images/9.png').convert_alpha()
 	)
 	game_images['flappybird'] = pygame.image.load(
-		birdplayer_image).convert_alpha()
+		bird_player_image).convert_alpha()
 	game_images['sea_level'] = pygame.image.load(
-		sealevel_image).convert_alpha()
+		sea_level_image).convert_alpha()
 	game_images['background'] = pygame.image.load(
 		background_image).convert_alpha()
 	game_images['pipeimage'] = (pygame.transform.rotate(pygame.image.load(
-		pipeimage).convert_alpha(), 180), pygame.image.load(
-	pipeimage).convert_alpha())
+		pipe_image).convert_alpha(), 180), pygame.image.load(
+	pipe_image).convert_alpha())
 
 	print("WELCOME TO THE FLAPPY BIRD GAME")
 	print("Press space or enter to start the game")
@@ -244,6 +250,6 @@ if __name__ == "__main__":
 					window.blit(game_images['background'], (0, 0))
 					window.blit(game_images['flappybird'],
 								(horizontal, vertical))
-					window.blit(game_images['sea_level'], (ground, elevation))
+					window.blit(game_images['sea_level'], (ground, ground_height))
 					pygame.display.update()
-					framepersecond_clock.tick(framepersecond)
+					framepersecond_clock.tick(fps)
