@@ -19,6 +19,7 @@ ground_y = window_height * 0.8
 ground_x = 0
 
 pipe_vel_x = -4
+pipe_spacing = 180
 
 bird_vel_y_initial = -9
 bird_vel_y_max = 10
@@ -40,7 +41,6 @@ def flappy_game():
     score = 0
     bird_x = int(window_width / 5)
     bird_y = int(window_width / 2)
-    mytempheight = 100
 
     # Generating two pipes for blitting on window
     first_pipe = create_pipe()
@@ -48,17 +48,17 @@ def flappy_game():
 
     # List containing lower pipes
     down_pipes = [
-        {'x': window_width + 300 - mytempheight,
+        {'x': window_width,
          'y': first_pipe['lower']['y']},
-        {'x': window_width + 300 - mytempheight + (window_width / 2),
+        {'x': window_width + pipe_spacing,
          'y': second_pipe['lower']['y']},
     ]
 
     # List Containing upper pipes
     up_pipes = [
-        {'x': window_width + 300 - mytempheight,
+        {'x': window_width,
          'y': first_pipe['upper']['y']},
-        {'x': window_width + 300 - mytempheight + (window_width / 2),
+        {'x': window_width + pipe_spacing,
          'y': second_pipe['upper']['y']},
     ]
 
@@ -101,10 +101,9 @@ def flappy_game():
             upperPipe['x'] += pipe_vel_x
             lowerPipe['x'] += pipe_vel_x
 
-        # Add a new pipe when the first is
-        # about to cross the leftmost part of the screen
-        if 0 < up_pipes[0]['x'] < 5:
-            new_pipe = create_pipe()
+        # add a new pipe when the last pipe appears on the screen
+        if up_pipes[-1]['x'] < window_width:
+            new_pipe = create_pipe(up_pipes[-1]['x'])
             up_pipes.append(new_pipe['upper'])
             down_pipes.append(new_pipe['lower'])
 
@@ -161,14 +160,14 @@ def is_game_over(bird_x, bird_y, up_pipes, down_pipes):
     return False
 
 
-def create_pipe():
+def create_pipe(last_pipe_x=0):
     offset = window_height / 3
     pipe_height = game_images['pipe_image'][0].get_height()
 
     y_lower = random.randrange(0, int(window_height - game_images['sea_level'].get_height() - 1.2 * offset)) + offset
     y_upper = y_lower - pipe_height - offset
 
-    pipe_x = window_width + 10
+    pipe_x = last_pipe_x + pipe_spacing
 
     return {
         'upper': {'x': pipe_x, 'y': y_upper},
