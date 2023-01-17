@@ -43,8 +43,8 @@ def flappygame():
     mytempheight = 100
 
     # Generating two pipes for blitting on window
-    first_pipe = createPipe()
-    second_pipe = createPipe()
+    first_pipe = create_pipe()
+    second_pipe = create_pipe()
 
     # List containing lower pipes
     down_pipes = [
@@ -77,7 +77,7 @@ def flappygame():
 
         # This function will return true
         # if the flappy bird is crashed
-        if isGameOver(bird_x, bird_y, up_pipes, down_pipes):
+        if is_game_over(bird_x, bird_y, up_pipes, down_pipes):
             return
 
         # check for score
@@ -104,7 +104,7 @@ def flappygame():
         # Add a new pipe when the first is
         # about to cross the leftmost part of the screen
         if 0 < up_pipes[0]['x'] < 5:
-            new_pipe = createPipe()
+            new_pipe = create_pipe()
             up_pipes.append(new_pipe['upper'])
             down_pipes.append(new_pipe['lower'])
 
@@ -141,7 +141,7 @@ def flappygame():
         fps_clock.tick(fps)
 
 
-def isGameOver(bird_x, bird_y, up_pipes, down_pipes):
+def is_game_over(bird_x, bird_y, up_pipes, down_pipes):
     if bird_y > ground_y - 25 or bird_y < 0:
         return True
 
@@ -161,7 +161,7 @@ def isGameOver(bird_x, bird_y, up_pipes, down_pipes):
     return False
 
 
-def createPipe():
+def create_pipe():
     offset = window_height / 3
     pipe_height = game_images['pipe_image'][0].get_height()
 
