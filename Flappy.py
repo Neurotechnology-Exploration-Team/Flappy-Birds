@@ -36,7 +36,7 @@ bird_player_image = 'images/bird.png'
 sea_level_image = 'images/base.jfif'
 
 
-def flappygame():
+def flappy_game():
     score = 0
     bird_x = int(window_width / 5)
     bird_y = int(window_width / 2)
@@ -215,7 +215,7 @@ if __name__ == "__main__":
             # If the user presses space or
             # up key, start the game for them
             elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                flappygame()
+                flappy_game()
 
             # if user doesn't press any key nothing happens
             else:
