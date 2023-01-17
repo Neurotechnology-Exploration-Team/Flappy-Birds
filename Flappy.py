@@ -15,7 +15,8 @@ fps = 32
 window = pygame.display.set_mode((window_width, window_height))
 
 # game variables
-ground_height = window_height * 0.8
+ground_y = window_height * 0.8
+ground_x = 0
 
 # image paths
 game_images = {}
@@ -148,108 +149,98 @@ def flappygame():
 
 
 def isGameOver(horizontal, vertical, up_pipes, down_pipes):
-	if vertical > ground_height - 25 or vertical < 0:
-		return True
+    if vertical > ground_y - 25 or vertical < 0:
+        return True
 
-	for pipe in up_pipes:
-		pipeHeight = game_images['pipeimage'][0].get_height()
-		if(vertical < pipeHeight + pipe['y'] and\
-		abs(horizontal - pipe['x']) < game_images['pipeimage'][0].get_width()):
-			return True
+    for pipe in up_pipes:
+        pipeHeight = game_images['pipe_image'][0].get_height()
+        if (vertical < pipeHeight + pipe['y'] and \
+                abs(horizontal - pipe['x']) < game_images['pipe_image'][
+                    0].get_width()):
+            return True
 
-	for pipe in down_pipes:
-		if (vertical + game_images['flappybird'].get_height() > pipe['y']) and\
-		abs(horizontal - pipe['x']) < game_images['pipeimage'][0].get_width():
-			return True
-	return False
+    for pipe in down_pipes:
+        if (vertical + game_images['flappy_bird'].get_height() > pipe['y']) and \
+                abs(horizontal - pipe['x']) < game_images['pipe_image'][
+            0].get_width():
+            return True
+    return False
 
 
 def createPipe():
-	offset = window_height/3
-	pipeHeight = game_images['pipeimage'][0].get_height()
-	y2 = offset + \
-		random.randrange(
-			0, int(window_height - game_images['sea_level'].get_height() - 1.2 * offset))
-	pipeX = window_width + 10
-	y1 = pipeHeight - y2 + offset
-	pipe = [
-		# upper Pipe
-		{'x': pipeX, 'y': -y1},
+    offset = window_height / 3
+    pipeHeight = game_images['pipe_image'][0].get_height()
+    y2 = offset + \
+         random.randrange(
+             0, int(window_height - game_images[
+                 'sea_level'].get_height() - 1.2 * offset))
+    pipeX = window_width + 10
+    y1 = pipeHeight - y2 + offset
+    pipe = [
+        # upper Pipe
+        {'x': pipeX, 'y': -y1},
 
-		# lower Pipe
-		{'x': pipeX, 'y': y2}
-	]
-	return pipe
+        # lower Pipe
+        {'x': pipeX, 'y': y2}
+    ]
+    return pipe
 
 
 # program where the game starts
 if __name__ == "__main__":
 
-		# For initializing modules of pygame library
-	pygame.init()
-	framepersecond_clock = pygame.time.Clock()
+    # For initializing modules of pygame library
+    pygame.init()
+    fps_clock = pygame.time.Clock()
 
-	# Sets the title on top of game window
-	pygame.display.set_caption('Flappy Bird Game')
+    # Sets the title on top of game window
+    pygame.display.set_caption('Flappy Bird Game')
 
-	# Load all the images which we will use in the game
+    # Load all the images which we will use in the game
+    game_images['flappy_bird'] = pygame.image.load(
+        bird_player_image).convert_alpha()
+    game_images['sea_level'] = pygame.image.load(
+        sea_level_image).convert_alpha()
+    game_images['background'] = pygame.image.load(
+        background_image).convert_alpha()
+    game_images['pipe_image'] = (pygame.transform.rotate(pygame.image.load(
+        pipe_image).convert_alpha(), 180), pygame.image.load(
+        pipe_image).convert_alpha())
 
-	# images for displaying score
-	game_images['scoreimages'] = (
-		pygame.image.load('images/0.png').convert_alpha(),
-		pygame.image.load('images/1.png').convert_alpha(),
-		pygame.image.load('images/2.png').convert_alpha(),
-		pygame.image.load('images/3.png').convert_alpha(),
-		pygame.image.load('images/4.png').convert_alpha(),
-		pygame.image.load('images/5.png').convert_alpha(),
-		pygame.image.load('images/6.png').convert_alpha(),
-		pygame.image.load('images/7.png').convert_alpha(),
-		pygame.image.load('images/8.png').convert_alpha(),
-		pygame.image.load('images/9.png').convert_alpha()
-	)
-	game_images['flappybird'] = pygame.image.load(
-		bird_player_image).convert_alpha()
-	game_images['sea_level'] = pygame.image.load(
-		sea_level_image).convert_alpha()
-	game_images['background'] = pygame.image.load(
-		background_image).convert_alpha()
-	game_images['pipeimage'] = (pygame.transform.rotate(pygame.image.load(
-		pipe_image).convert_alpha(), 180), pygame.image.load(
-	pipe_image).convert_alpha())
+    # digit images for displaying score
+    game_images['score_images'] = \
+        [pygame.image.load(f'images/{i}.png').convert_alpha() for i in
+         range(10)]
 
-	print("WELCOME TO THE FLAPPY BIRD GAME")
-	print("Press space or enter to start the game")
+    # game variables
+    bird_start_x = int(window_width / 5)
+    bird_start_y = int(
+        (window_height - game_images['flappy_bird'].get_height()) / 2)
 
-	# Here starts the main game
+    print("WELCOME TO THE FLAPPY BIRD GAME")
+    print("Press space or enter to start the game")
 
-	while True:
+    # Here starts the main game
+    while True:
+        for event in pygame.event.get():
 
-		# sets the coordinates of flappy bird
+            # if user clicks on cross button, close the game
+            if event.type == QUIT or \
+                    (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
 
-		horizontal = int(window_width/5)
-		vertical = int(
-			(window_height - game_images['flappybird'].get_height())/2)
-		ground = 0
-		while True:
-			for event in pygame.event.get():
+            # If the user presses space or
+            # up key, start the game for them
+            elif event.type == KEYDOWN \
+                    and (event.key == K_SPACE or event.key == K_UP):
+                flappygame()
 
-				# if user clicks on cross button, close the game
-				if event.type == QUIT or (event.type == KEYDOWN and \
-										event.key == K_ESCAPE):
-					pygame.quit()
-					sys.exit()
-
-				# If the user presses space or
-				# up key, start the game for them
-				elif event.type == KEYDOWN and (event.key == K_SPACE or\
-												event.key == K_UP):
-					flappygame()
-
-				# if user doesn't press anykey Nothing happen
-				else:
-					window.blit(game_images['background'], (0, 0))
-					window.blit(game_images['flappybird'],
-								(horizontal, vertical))
-					window.blit(game_images['sea_level'], (ground, ground_height))
-					pygame.display.update()
-					framepersecond_clock.tick(fps)
+            # if user doesn't press any key nothing happens
+            else:
+                window.blit(game_images['background'], (0, 0))
+                window.blit(game_images['flappy_bird'],
+                            (bird_start_x, bird_start_y))
+                window.blit(game_images['sea_level'], (ground_x, ground_y))
+                pygame.display.update()
+                fps_clock.tick(fps)
