@@ -26,6 +26,9 @@ bird_vel_y_max = 10
 bird_vel_y_min = -8
 gravity = 1
 
+pipe_collision = True
+ceiling_collision = True
+
 # the velocity of the bird immediately after flapping
 bird_flap_velocity = -8
 
@@ -40,7 +43,7 @@ sea_level_image = 'images/base.jfif'
 def flappy_game():
     score = 0
     bird_x = int(window_width / 5)
-    bird_y = int(window_width / 2)
+    bird_y = bird_start_y
 
     # Generating two pipes for blitting on window
     first_pipe = create_pipe()
@@ -71,7 +74,7 @@ def flappy_game():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                if bird_y > 0:
+                if bird_y > 0 or not ceiling_collision:
                     bird_vel_y = bird_flap_velocity
                     bird_flapped = True
 
@@ -141,8 +144,14 @@ def flappy_game():
 
 
 def is_game_over(bird_x, bird_y, up_pipes, down_pipes):
-    if bird_y > ground_y - 25 or bird_y < 0:
+    if ceiling_collision and bird_y < 0:
         return True
+
+    if bird_y > ground_y - 25:
+        return True
+
+    if not pipe_collision:
+        return False
 
     pipe_height = game_images['pipe_image'][0].get_height()
     pipe_width = game_images['pipe_image'][0].get_width()
