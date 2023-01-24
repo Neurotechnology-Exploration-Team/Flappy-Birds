@@ -28,6 +28,7 @@ gravity = 1
 
 pipe_collision = True
 ceiling_collision = True
+bouncy_floor = False
 
 # the velocity of the bird immediately after flapping
 bird_flap_velocity = -8
@@ -82,6 +83,11 @@ def flappy_game():
         # if the flappy bird is crashed
         if is_game_over(bird_x, bird_y, up_pipes, down_pipes):
             return
+
+        if bouncy_floor and bird_y > ground_y - 25:
+            bird_y = ground_y - 30
+            bird_vel_y = -bird_vel_y
+
 
         # check for score
         player_mid_pos = bird_x + game_images['flappy_bird'].get_width() / 2
@@ -147,7 +153,7 @@ def is_game_over(bird_x, bird_y, up_pipes, down_pipes):
     if ceiling_collision and bird_y < 0:
         return True
 
-    if bird_y > ground_y - 25:
+    if not bouncy_floor and bird_y > ground_y - 25:
         return True
 
     if not pipe_collision:
